@@ -1,0 +1,367 @@
+======
+INTRO:
+======
+
+    Why Python tech talk? I think there has been a increase in the amount Python development
+    being done at Dolby.  It's being used in many different ways and there's no real global push
+    to adopt Python it has just sort of come about organically.
+
+    Also, it's one of the few technical topics I feel comfortable talking about.
+
+    I called the talk "Productive Python for C Developers".  Python is the natural language I 
+    try to tackle a CS problem in.  I think that for a lot of the company C is the language
+    that we think in.  There are a lot of differences between the languages so I want to talk
+    about things to keep in mind to be a more productive Python coder.
+
+    The topics I'm gonna cover are
+        * Fundamental Differences From C
+        * Python tools you should use
+        * Slightly more advanced topics that you can use to impress your friends
+
+    Some of the things I will say might sound preachy.  Use Python 3.  Don't import *.
+    But once you understand them you might start preaching about them as well.
+
+==========
+THE BASICS:
+==========
+
+Data Types:
+    In C the types you have are pretty limited. int float double short char.  Any
+    other types are up to the programmer to implement for themself using structs
+    and so on.
+
+    Python has a much richer set of types. The most important to know are:
+
+    The basic: int, float, string
+    the collections: list, dict, tuple, and set
+
+    Here's when to use them:
+    
+    Use a list when you need a sequence of elements that may grow and the order is important.
+
+    Use a tuple if you need a sequence of elements and you will not be modifying that sequence.
+
+    Use a dict when you need to look up a value in linear time using a key. For example
+    if you need to store some audio info (name, sample rate, samples, data type) you could
+    use a list to store everything but then you would need extra variable to store what
+    each index was.  It could be made a little better by using a tuple since that would make
+    it read only.  It would be best to use a dictionary in this example.
+
+    Methods for each of these collections
+
+    FOR loops on each of them
+    
+Memory Model:
+    When you declare a variable in C the memory is allocated on the stack.  Then
+    you can intialize the variable with a value.
+
+    In Python it's a little different. When you write:
+    x = 42 - You are declaring a name (or alias) and nothing more.  What happens
+    under the hood is a literal is allocated and initialized in memory and your
+    name now referes to that literal that the Python interpreter has ownership of.
+
+    If you were to write something like: "y = x" now you have created another alias that points
+    to the same literal object the Python interpreter created earlier.
+
+    x = 42
+    y = x
+    x += 1
+    print(x, y)  # 43, 42
+
+    x = [1, 2, 3]
+    y = x
+    x[0] = 4
+    print(x, y)  # [4, 2, 3] * 2
+
+Logical Operations:
+    Comparisons
+    ===========
+    In C you have logical operations ==, !=, >/<, or <=/>=. In Python these exists as well.
+    You can also use both in one line ie. x = 5; 4 < x < 8 or 2 != x < 10
+
+    Truthy Values
+    =============
+    if(expr) in C evaluates to true if expr is not 0.  In python expr can be many things.
+
+    0, "", False, {}, [], (), set() evaluates to False
+    non-zero, "anything", True, non-empty dict, set, or tuple evaluate to True
+
+    So don't write 'if s == "":' write 'if s:'
+
+    Comparing ID
+    ============
+    An object has a type, value, and location.
+    type is data type, value is the value stored in that object, and location
+    is like a memory address for the value.
+
+    When you type 'is' you are comparing the locations of two objects.  Basically
+    do they occupy the same spot in memory.  This is a lot faster in Python than comparing by
+    value. Use 'is' when comparing to False/True, None/not None or if you really care that the objects
+    are in the same memory location.  Since the Python interpreter gives you these values for free
+    using 'is' is much faster.
+
+Scope of variables:
+    Variables outside of all functions are global variables.  Much like in C.  Because they
+    can be modified from anywhere inside the file they should be avoided.
+
+    Variables declared inside a function or other block have scope within that block. Much
+    like C if we return from a function we no longer have access to the variables declared
+    within it.
+
+    If there is a global name and a local variable of the same name the local variable
+    will be used first.  If you try to access a variable but it's not in the local scope
+    the interpreter will attempt to access a global variable of the same name.  If it can't find
+    one there then it will raise a NameError exception saying the variable name couldn't be found.
+
+Reference Counting for Garb Coll:
+    When we were interviewing candidates last week one of the questions we asked
+    was about memory management and memory leaks in C.  One of the benefits of Python
+    (it can also be consider not to be a benefit) is that you don't have to manage
+    your own memory.  The way Python decides whether it can release a resource is
+    by using Reference Counting.
+
+    An object only exists as long as it has a reference count above 0. When the
+    reference count drops to 0 it can be garbage collected by the interpreter
+    since it is assumed to not be used anymore.
+
+    Increases:
+        - Created/assigned
+        - other aliases created
+        - passed to a function
+        - added to a container
+
+    Decreases:
+        - local reference goes out of scope (a function ends)
+        - del is called on the alias (del bar)
+        - an alias gets assigned to a different object (bar = 42)
+        - it is removed from a container (list.remove(foo))
+        - the container itself is removed (del listofstuff)
+
+Error Handling:
+    LBYL vs EAFP
+
+    "Look Before You Leap"
+    ======================
+    In C the idiom is to check the returned error of a function call and handle
+    accordingly.  This can cause code that looks like:
+
+    void main() {
+        int ret = thing1();
+        if (ret)
+        {
+            ret = thing2();
+            if(ret)
+            {
+                ret = thing3();
+                if(ret)
+                {
+                    // And on and on
+                }
+            }
+        }
+    }
+
+    So when you first start to write Python code you'll this way of thinking much
+    more familiar.  However, the common way to go about error handling in Python
+    is to use:
+    
+    Easier to Ask for Forgiveness than Permission
+    =============================================
+    Python has exceptions.  This is done by using a try/except clause.  The code
+    you are attempting to execute goes in the try block and if an exception is raised
+    you catch it in the except block.
+
+    1. Try and anonymous exception
+    2. Try and specific exception
+    3. Try and multiple specific exceptions
+    4. Else / Finally
+    5. Cover not handling the right exception
+    6. Cover handling a parent exception before a subclass later
+
+    Reasons this way is better is because if something not critical happens it is
+    much easier to recover and continue on with the execution of the program.  You
+    can do this in C but it's a lot more work and the syntax for it can make your
+    program look gross.
+
+Coding Safely with Context Managers:
+    One tricky bug C developers can run into is not closing a resource after opening
+    it.  Lets say you run a function that opens a file a couple thousand times in
+    runtime eventually you'll get an error when trying to open any more files.
+
+    It can be hard in C to ensure that someone will close a file everytime they open it.
+    You kind of hope they will code it into their code but sometimes they may not.
+
+    There are ways to handle this sort of automatic a close for every open situation in Python.
+    The mechanism is called a Context Manager and the most common example is with this exact
+    situation I described earlier.  If you see the with keyword you know there's some kind of
+    context managing going on:
+
+    with open("somefile.txt", "r") as fileforreading:
+        # do something with fileforreading ...
+
+    When the with keyword is used Python runs the __enter__ function on an object
+    In this case a File object. When the with block is done (the indents go back a block)
+    the __exit__ function is called for an object.  No matter what happens inside the block
+    once the block goes out of scope the __exit__ function is called.  This is how
+    Python ensures in the above case that the file will always close.
+
+Function Arguments and Returned Values:
+
+    1. Just name arguments
+    2. Keyword arguments
+    3. A mixture
+    4. *args
+    5. **kwargs
+
+    Make sure:
+    1.  Get the ordering right
+    2.  Don't initialize a container in the argument list.  Use None and set afterwards
+        One of the most common interview questions. (Function definitions are lazy)
+
+The import statement:
+    1. import a module. What happens
+    2. import a package (__init__.py has to exist)
+    3. Don't import * !
+
+============
+PYTHON TOOLS
+============
+
+Running Python modules from the command line:
+
+    If a package has a file __main__.py in it you can run that package from the command
+    line.
+
+    For example:
+        python -m http.server
+
+Static Code Analysis:
+
+    PEP8 (+ plugin for SublimeText) - automatically checks to see if you code conforms to PEP8 rules
+    PyFlakes (+ plugin for SublimeText) - checks for things that are most likely mistakes in your code
+        unused imports, import *, unused variables, redefined while unused
+        full list at https://github.com/pyflakes/pyflakes/blob/master/pyflakes/messages.py
+
+pip installs packages:
+    People can write Python packages and host them on PyPi.org where they can easily be downloaded
+    and installed on your machine.  PIP is the easiest tool to use for this and it comes by default
+    in the newer versions of Python.  It is a package but it has a __main__.py so you can run it on
+    the command line.
+
+    python -m pip install requests
+
+    installs the requests package onto your local machine.  Then you can import the requests package
+    in your code using: `from requests import get`
+
+    To see what packages you have installed you can type pip freeze
+
+    Install from a file of packages: pip install -r requirements.txt
+
+virtualenv to encapsulate your environment:
+    By default PIP installs in Python35/libs/site-packages . This location can grow quite large if
+    you like to install packages.  Plus if you are writing a tool sometimes you become dependent
+    on the packages you like to use.  Use virtualenv to ensure that you have a fresh environment to develop on
+    and that it can be easily replicated for whoever you send your code to.
+
+    1. pip install virtualenv
+    2. make virtualenv
+    3. source the environment
+    4. now it's fresh and install all your packages
+    5. you can pip freeze and only the essential packages are listed
+
+pdb for debugging:
+    PDB is a port of gdb to Python.  It lets you run the Python interpreter, set
+    breakpoints, step through code, and the most important part is you can run most Python
+    statements in the debugger to check things.
+
+    1. step through slowly
+    2. set bpoint
+    3. continue to bpoint
+    4. set bpoint in another file
+    5. continue to that bpoint
+    6. print some local variables
+    7. non trivial python expression
+
+Docstrings to help others:
+    There's a cool way to automatically include documentation in your code.  Docstrings
+    are any string that shows up at the beginning of your class or function and has
+    some helpful information.  When someone calls help() and passes your class or
+    function as an argument this docstring will be printed out.
+
+=============
+MORE ADVANCED
+=============
+
+Iterators and generators:
+    In Python you work with sequences of data a lot.  Sometimes these sequences can get
+    really really long.  Like in Kyle's case he was generating thousands of lines of XML
+    that was being stored in some object.  If you made multiple instances of this file
+    you could run the risk of running out of memory on your computer.
+
+    Also when you pass around large sequences to functions there is a lot of overhead put on
+    the Python interpreter.  One way to overcome this is using the concept of iterators.
+
+    An iterator is a class that has some special dunderscore methods that make it so the
+    whole sequence doesn't have to exist all at once they can be created when they are needed.
+    This way you avoid having to compute the whole sequence and pass it around everywhere.
+
+    Square Iterator.
+
+    Generators are like iterators except they aren't classes that implement dunderscore methods
+    they are functions that use the yield keyword. They work in the same way that the values are
+    generated on the fly instead of stored in an internal structure.
+
+Functional programming:
+    Functional programming is a paradigm where your programs are a series of mathematical-like
+    functions and there is no storing data and modifying it. It's a lot of chaining together
+    a whole bunch of functions.  The most common functions in functional programming are:
+
+    any
+    all
+    map
+    reduce
+    filter
+
+Comprehensions:
+    The people who believe functional programming doesn't belong in Python like to say
+    that everything you need can be done using comprehensions.
+
+    Comprehensions are short ways to create sequences using for syntax and the option
+    of conditions.  For example:
+
+    list of squares, list of even squares (if), list of odd squares of "bust!" (if else)
+
+    list
+    dict
+    set
+    generator
+
+Closures:
+
+Decorators:
+    Syntactic sugar.  The @ symbol. @property you've probably seen.
+
+    1. Functions are first class. Can be returned from other functions
+    2. Functions passed as arguments can be wrapped
+
+    Talk about  ED2StreamGenerator and encode, format, emdf, merge and how you would
+    have to wrap each in a try/except.
+
+    3. Functions being wrapped have full access to all the variables around them
+    4. @ is a fancy way of writing this
+
+Threading and how it only sorta exists:
+    Threads are 
+        1. parallel execution that happens in
+        2. the same memory space.
+    The most common pattern is a UI thread with knobs and buttons and a Audio Processing thread.
+
+    there is a threading package in Python and it's pretty good for handling the things you need.
+    #2 is something that it gets down fine. But it fails on #1.  Python has something called the
+    Global Interpreter Lock (GIL).  When a thread wants to run something through the Python interpeter
+    it has to acquire the GIL and while it has it no other thread can execute.
+
+    This is the reason that it's impossible for two Python threads to run truly parallel.
+
+    There are libraries that help with this, gevent, asyncio.  They do monkeypatching which is
+    when you overwrite the implementation of the Python standard library to act in a way you want.
