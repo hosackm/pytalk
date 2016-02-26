@@ -312,6 +312,47 @@ a.anchor-link {
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Strings are another very useful data type with a rich set of methods</span>
+<span class="n">astring</span> <span class="o">=</span> <span class="s2">&quot;Hello, my name is Matt, and I&#39;m giving you a talk today.&quot;</span>
+
+<span class="c1"># They are immutable</span>
+<span class="n">astring</span> <span class="o">=</span> <span class="n">astring</span> <span class="o">+</span> <span class="s2">&quot; That is all&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">astring</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">astring</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">astring</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;!@#$%&quot;</span><span class="p">))</span>
+
+<span class="n">fmt_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is </span><span class="si">{}</span><span class="s2">&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fmt_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Dolby&quot;</span><span class="p">,</span> <span class="s2">&quot;Awesome!&quot;</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello, my name is Matt, and I&apos;m giving you a talk today. That is all
+[&apos;Hello&apos;, &apos; my name is Matt&apos;, &quot; and I&apos;m giving you a talk today. That is all&quot;]
+Hello,!@#$%my!@#$%name!@#$%is!@#$%Matt,!@#$%and!@#$%I&apos;m!@#$%giving!@#$%you!@#$%a!@#$%talk!@#$%today.!@#$%That!@#$%is!@#$%all
+Dolby is Awesome!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div></section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[75]:</div>
 <div class="inner_cell">
     <div class="input_area">
