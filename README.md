@@ -4,9 +4,9 @@ pytalk
 This repository holds the materials for the Tech Talk that I gave on February
 26, 2016 at Dolby Laboratories.  The contents include:
 
-* Jupyter Notebook with Python examples
-* Slides for presentation created using jupyter-nbconvert
-* script.txt is what I was reading from when I wasn't improvising
+* Tech Talk.ipynb (Jupyter Notebook with Python examples)
+* Tech Talk.slides.html (Slides for presentation created using jupyter-nbconvert)
+* script.txt (my notes for what to say)
 * Directories with example code I ran during the presentation
 
 Viewing the Slides
@@ -19,12 +19,12 @@ to view them type the following:
 ````bash
     cd /the/directory/this/readme/is/in
     # If you're using Python 2
-    python -m HTTPSimpleServer
+    python -m SimpleHTTPServer
     # If you're using Python 3
     python -m http.server
 ````
 
-Then navigate to: http://localhost:8000/Tech%20Talk.slides.html.
+Then navigate to: http://localhost:8000/Tech%20Talk.slides.html
 
 Running the Jupyter Notebook
 ============================
@@ -34,7 +34,7 @@ in a web browser.
 
 To do so, install Jupyter followin the installation
 instructions on 
-(their website)[http://jupyter.readthedocs.org/en/latest/install.html].
+[their website](http://jupyter.readthedocs.org/en/latest/install.html).
 
 Then you can run:
 
